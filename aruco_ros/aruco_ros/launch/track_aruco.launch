@@ -1,0 +1,20 @@
+<launch>
+    <arg name="namespace_prefix" default="tof_calibration" />
+
+    <arg name="marker_size" value="0.094" />
+    <arg name="marker_id" value="582" />
+
+    <!-- start ArUco -->
+    <node name="aruco_tracker" pkg="aruco_ros" type="single">
+        <remap from="/camera_info" to="/down_tof_range_camera_info" />
+        <remap from="/image" to="/down_tof_intensity" />
+        <param name="image_is_rectified" value="true"/>
+        <param name="marker_size"        value="$(arg marker_size)"/>
+        <param name="marker_id"          value="$(arg marker_id)"/>
+        <param name="reference_frame"    value="down"/>
+        <param name="camera_frame"       value="down"/>
+        <param name="marker_frame"       value="aruco_marker" />
+        <param name="corner_refinement"       value="LINES" />
+    </node>
+
+</launch>

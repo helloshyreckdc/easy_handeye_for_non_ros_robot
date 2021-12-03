@@ -1,0 +1,46 @@
+<launch>
+    <arg name="namespace_prefix" default="tof_calibration" />
+
+    <arg name="robot_ip" value="192.168.1.205" />
+
+    <arg name="marker_size" value="0.094" />
+    <arg name="marker_id" value="582" />
+
+    <!-- start the camera
+    <include file="$(find openni2_launch)/launch/openni2.launch" >
+    </include>
+-->
+
+    <!-- start ArUco -->
+    <node name="aruco_tracker" pkg="aruco_ros" type="single">
+        <remap from="/camera_info" to="/down_tof_range_camera_info" />
+        <remap from="/image" to="/down_tof_intensity" />
+        <param name="image_is_rectified" value="true"/>
+        <param name="marker_size"        value="$(arg marker_size)"/>
+        <param name="marker_id"          value="$(arg marker_id)"/>
+        <param name="reference_frame"    value="down"/>
+        <param name="camera_frame"       value="down"/>
+        <param name="marker_frame"       value="aruco_marker" />
+        <param name="corner_refinement"       value="LINES" />
+
+    </node>
+
+    <!-- start the robot 
+    <include file="$(find pbd)/launch/ur_system.launch">
+    </include>
+-->
+    <!-- start easy_handeye -->
+    <include file="$(find easy_handeye)/launch/calibrate.launch" >
+        <arg name="namespace_prefix" value="$(arg namespace_prefix)" />
+        <arg name="eye_on_hand" value="false" />
+
+        <arg name="tracking_base_frame" value="down" />
+        <arg name="tracking_marker_frame" value="aruco_marker" />
+        <arg name="robot_base_frame" value="base_link" />
+        <arg name="robot_effector_frame" value="ee_link" />
+
+        <arg name="freehand_robot_movement" value="true" />
+        <arg name="robot_velocity_scaling" value="0.5" />
+        <arg name="robot_acceleration_scaling" value="0.2" />
+    </include>
+</launch>
